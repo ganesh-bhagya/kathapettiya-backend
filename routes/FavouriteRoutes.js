@@ -1,18 +1,11 @@
 const express = require("express");
 const multer = require("multer");
-
 const {
-  getAllStories,
-  createStory,
-  editStory,
-  getAllStoriesByTitle,
-  getAllNewStories,
-  getAllPoems,
-  getStoriesByUser
-} = require("../controllers/StoryController");
+  createFavourite,
+  getFavouriteByUser,
+} = require("../controllers/FavouriteController");
 
 const router = express.Router();
-
 // Multer configuration
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -34,12 +27,7 @@ const fileFilter = (req, file, cb) => {
 };
 
 const upload = multer({ storage: storage, fileFilter: fileFilter });
+router.route("/").post(createFavourite); // Use Multer middleware for 'image' field
+router.route("/favourite-by-user/:userId").get(getFavouriteByUser); // Use Multer middleware for 'image' field
 
-// Route for getting all categories and creating a new category
-router.route("/").get(getAllStories).post(upload.single("image"), createStory); // Use Multer middleware for 'image' field
-router.route("/poems").get(getAllPoems); // Use Multer middleware for 'image' field
-router.route("/new-stories").get(getAllNewStories); // Use Multer middleware for 'image' field
-router.route("/story-by-title/:title").get(getAllStoriesByTitle);
-router.route("/stories-by-user/:id").get(getStoriesByUser);
-router.put("/:id", upload.single("image"), editStory);
 module.exports = router;

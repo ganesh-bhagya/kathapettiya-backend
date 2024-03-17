@@ -1,7 +1,7 @@
 const storyService = require("../services/StoryServices");
 
 const getBaseUrl = (req) => {
-  return `${req.protocol}://${req.get('host')}/uploads`;
+  return `${req.protocol}://${req.get("host")}/uploads`;
 };
 
 const handleError = (res, err) => {
@@ -13,6 +13,16 @@ exports.getAllStories = async (req, res) => {
     const baseUrl = getBaseUrl(req);
     const stories = await storyService.getAllStories(baseUrl);
     res.json({ data: stories, status: "success" });
+  } catch (err) {
+    handleError(res, err);
+  }
+};
+
+exports.getAllPoems = async (req, res) => {
+  try {
+    const baseUrl = getBaseUrl(req);
+    const poems = await storyService.getAllPoems(baseUrl);
+    res.json({ data: poems, status: "success" });
   } catch (err) {
     handleError(res, err);
   }
@@ -50,8 +60,23 @@ exports.createStory = async (req, res) => {
 
 exports.editStory = async (req, res) => {
   try {
-    const updatedStory = await storyService.editStory(req.params.id, req.body, req.file);
+    const updatedStory = await storyService.editStory(
+      req.params.id,
+      req.body,
+      req.file
+    );
     res.json({ data: updatedStory, status: "success" });
+  } catch (err) {
+    handleError(res, err);
+  }
+};
+
+exports.getStoriesByUser = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const baseUrl = getBaseUrl(req);
+    const stories = await storyService.getStoriesByUser(baseUrl, userId);
+    res.json({ data: stories, status: "success" });
   } catch (err) {
     handleError(res, err);
   }

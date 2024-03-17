@@ -14,6 +14,7 @@ const seriesRouter = require('./routes/SeriesRoutes');
 const roleRouter = require('./routes/RoleRoutes');
 const storyRouter = require('./routes/StoryRoutes');
 const queueRouter = require('./routes/QueueRoutes');
+const favouriteRouter = require('./routes/FavouriteRoutes');
 
 const corsOptions = {
   // origin: "https://www.supershinecarcare.lk",
@@ -41,6 +42,7 @@ app.use("/api/tags", tagRouter);
 app.use("/api/series", seriesRouter);
 app.use("/api/stories", storyRouter);
 app.use("/api/queues", queueRouter);
+app.use("/api/favourites", favouriteRouter);
 
 app.use('/uploads', express.static('uploads'));
 

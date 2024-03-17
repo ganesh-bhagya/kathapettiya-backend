@@ -45,7 +45,7 @@ const storySchema = new Schema({
       type: Schema.Types.ObjectId,
       ref: "Tag",
     },
-  ],
+  ], 
   series: {
     type: Schema.Types.ObjectId,
     ref: "Series",

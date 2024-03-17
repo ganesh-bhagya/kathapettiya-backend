@@ -39,7 +39,7 @@ exports.createUser = async (req, res) => {
     user.roles = role._id;
     await user.save();
 
-    res.status(201).json({ message: "User registered successfully" });
+    res.status(200).json({ message: "User registered successfully" });
   } catch (error) {
     if (error.code === 11000 && error.keyPattern && error.keyPattern.email === 1) {
       // Duplicate key error

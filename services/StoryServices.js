@@ -7,7 +7,10 @@ const { formatStory, handleError } = require("../utils/sharedUtils");
 
 exports.getAllNewStories = async (baseUrl) => {
   try {
-    const stories = await StoryModel.find({ status: "active" })
+    const stories = await StoryModel.find({
+      status: "active",
+      section: "novel",
+    })
       .populate("user")
       .populate("tags")
       .populate("category")
@@ -26,7 +29,10 @@ exports.getAllNewStories = async (baseUrl) => {
 
 exports.getAllStories = async (baseUrl) => {
   try {
-    const stories = await StoryModel.find({ status: "active" })
+    const stories = await StoryModel.find({
+      status: "active",
+      section: "novel",
+    })
       .populate("user")
       .populate("tags")
       .populate("category");
@@ -36,6 +42,23 @@ exports.getAllStories = async (baseUrl) => {
     );
 
     return storiesWithImages;
+  } catch (error) {
+    handleError(error);
+  }
+};
+
+exports.getAllPoems = async (baseUrl) => {
+  try {
+    const stories = await StoryModel.find({
+      status: "active",
+      section: "poem",
+    })
+      .populate("user")
+      .populate("category");
+    console.log(stories);
+    const poemsWithImages = stories.map((story) => formatStory(story, baseUrl));
+
+    return poemsWithImages;
   } catch (error) {
     handleError(error);
   }
@@ -62,12 +85,16 @@ exports.createStory = async (storyData, image) => {
       ? new ObjectId(storyData.category)
       : null;
 
-    const tagIds =
-      storyData.tags && typeof storyData.tags === "string"
-        ? storyData.tags.split(",").map((tag) => new ObjectId(tag.trim()))
-        : [];
+    let tagIds = [];
+    if (storyData.tags && typeof storyData.tags === "string") {
+      // Splitting the tags string and removing any leading/trailing spaces
+      tagIds = storyData.tags.split(",").map((tag) => tag.trim());
+    } else if (Array.isArray(storyData.tags)) {
+      // If tags are already provided as an array
+      tagIds = storyData.tags.map((tag) => tag.toString());
+    }
 
-    const newStory = new StoryModel({
+    const newStoryData = {
       title: storyData.title,
       category: categoryId,
       content: storyData.content,
@@ -75,12 +102,21 @@ exports.createStory = async (storyData, image) => {
       moderator_note: storyData.moderator_note,
       note: storyData.note,
       section: storyData.section,
-      series: storyData.series,
       status: storyData.status,
-      tags: tagIds,
+      tags: tagIds.length !== 0 ? tagIds : [],
       user: storyData.user,
       image: image ? image.filename : undefined,
-    });
+    };
+
+    // Only include series if it's not null
+    if (storyData.series !== null) {
+      // Ensure storyData.series is a valid ObjectId before assigning it
+      if (mongoose.Types.ObjectId.isValid(storyData.series)) {
+        newStoryData.series = storyData.series;
+      }
+    }
+
+    const newStory = new StoryModel(newStoryData);
 
     await newStory.save();
     return newStory;
@@ -102,6 +138,23 @@ exports.editStory = async (storyId, storyData, image) => {
     );
 
     return updatedStory;
+  } catch (error) {
+    handleError(error);
+  }
+};
+
+exports.getStoriesByUser = async (baseUrl, userId) => {
+  try {
+    const stories = await StoryModel.find({ user: userId })
+      .populate("user")
+      .populate("tags")
+      .populate("category");
+
+    const formattedStories = stories.map((story) =>
+      formatStory(story, baseUrl)
+    );
+
+    return formattedStories;
   } catch (error) {
     handleError(error);
   }

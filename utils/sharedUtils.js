@@ -33,9 +33,8 @@ const formatCreatedAt = (createdAt) => {
     });
   }
 };
-
 const formatStory = (story, baseUrl) => {
-  return {
+  const formattedStory = {
     _id: story._id,
     title: story.title,
     line: story.line,
@@ -55,15 +54,24 @@ const formatStory = (story, baseUrl) => {
       _id: story.category._id,
       description: story.category.description,
     },
-    series: {
+  };
+
+  if (story.series) {
+    formattedStory.series = {
       _id: story.series._id,
       description: story.series.description,
-    },
-    tags: story.tags.map((tag) => ({
+    };
+  }
+
+  // Check if story has tags
+  if (story.tags && story.tags.length > 0) {
+    formattedStory.tags = story.tags.map((tag) => ({
       _id: tag._id,
       description: tag.description,
-    })),
-  };
+    }));
+  }
+
+  return formattedStory;
 };
 
 

@@ -11,11 +11,12 @@ exports.getAllUsers = async (req, res) => {
 
 exports.createUser = async (req, res) => {
   try {
+   
     // Call the service function to create user
     const users = await userService.createUser(req);
 
     // Send response based on the result returned by the service
-    res.json({ data: users, status: "success" });
+    // res.json({ data: users, status: "success" });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

@@ -6,10 +6,12 @@ const favouriteSchema = new Schema({
     type: Date,
     default: Date.now,
   },
-  stories: {
-    type: Schema.Types.ObjectId,
-    ref: "Story",
-  },
+  stories: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Story",
+    },
+  ],
   users: {
     type: Schema.Types.ObjectId,
     ref: "User",
